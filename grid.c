@@ -27,8 +27,8 @@ static inline void incr_cell_f(grid_t *grid, int x, int y) {
 		return;
 	}
 
-	if (*cell_at(x, y) != SQUARE_BOMB) {
-		*cell_at(x, y) += 1;
+	if (!square_is_bomb(*cell_at(x, y))) {
+		square_value(*cell_at(x, y)) += 1;
 	}
 }
 
@@ -112,7 +112,7 @@ square_t grid_get(grid_t *grid, coord_t location) {
  */
 void grid_set(grid_t *grid, coord_t location, square_t square) {
 	unsigned int x = location.x, y = location.y;
-	assert(square == SQUARE_BOMB || square == SQUARE_EMPTY);
+	assert(square_is_bomb(square) || square_value(square) == 0);
 	assert(grid != NULL);
 	assert(grid->data != NULL);
 

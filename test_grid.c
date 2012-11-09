@@ -20,13 +20,13 @@ int main(void) {
 	assert(grid->data   != NULL);
 
 	grid_set(grid, coord(5, 5), SQUARE_BOMB);
-	assert(grid_get(grid, coord(5, 5)) == SQUARE_BOMB);
-	assert(grid_get(grid, coord(5, 6)) == 1);
-	assert(grid_get(grid, coord(4, 4)) == 1);
+	assert(square_is_bomb(grid_get(grid, coord(5, 5))));
+	assert(square_value(grid_get(grid, coord(5, 6))) == 1);
+	assert(square_value(grid_get(grid, coord(4, 4))) == 1);
 	grid_set(grid, coord(5, 6), SQUARE_BOMB);
-	assert(grid_get(grid, coord(4, 5)) == 2);
+	assert(square_value(grid_get(grid, coord(4, 5))) == 2);
 	grid_set(grid, coord(0, 0), SQUARE_BOMB);
-	assert(grid_get(grid, coord(0, 1)) == 1);
+	assert(square_value(grid_get(grid, coord(0, 1))) == 1);
 
 	grid_del(grid);
 
@@ -34,7 +34,7 @@ int main(void) {
 	 * sort of CoW or lazy allocation... we'll see */
 	grid = grid_new(UINT_MAX - 1, UINT_MAX - 1, 0);
 	grid_set(grid, coord(UINT_MAX - 2, UINT_MAX - 2), SQUARE_BOMB);
-	assert(grid_get(grid, coord(UINT_MAX - 2, UINT_MAX - 2)) == SQUARE_BOMB);
+	assert(square_is_bomb(grid_get(grid, coord(UINT_MAX - 2, UINT_MAX - 2))));
 
 	grid_del(grid);
 

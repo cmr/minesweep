@@ -1,12 +1,20 @@
 #ifndef GRID_H
 #define GRID_H
 
-typedef int square_t;
+typedef struct square_t {
+	unsigned char hidden; /* 1 for hidden, 0 for revealed */
+	signed char value; /* -1 for bomb */
+} square_t;
 
-#define SQUARE_BOMB -1
-#define SQUARE_EMPTY 0
+#define SQUARE_BOMB ((square_t){.hidden = 1, .value = -1})
+#define SQUARE_EMPTY ((square_t){.hidden = 1, .value = 0})
 
-#define coord(x_, y_) ((struct coord){.x = (x_), .y = (y_)})
+#define square_value(square) ((square).value)
+#define square_is_bomb(square) ((square).value == -1)
+#define square_hidden(square) ((square).hidden)
+#define square_cmp(sq1, sq2) ((sq1).value == (sq2).value)
+
+#define coord(x_, y_) ((coord_t){.x = (x_), .y = (y_)})
 
 typedef struct grid {
 	unsigned int height, width, bombs;
