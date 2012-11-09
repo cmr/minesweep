@@ -35,4 +35,11 @@ int main(void) {
 	grid = grid_new(UINT_MAX - 1, UINT_MAX - 1, 0);
 	grid_set(grid, coord(UINT_MAX - 2, UINT_MAX - 2), SQUARE_BOMB);
 	assert(grid_get(grid, coord(UINT_MAX - 2, UINT_MAX - 2)) == SQUARE_BOMB);
+
+	grid_del(grid);
+
+	grid = grid_new(16, 16, 0);
+	grid_set(grid, coord(16, 16), SQUARE_BOMB);
+
+	return 0;
 }

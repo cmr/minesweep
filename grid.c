@@ -20,10 +20,10 @@ static inline void incr_cell_f(grid_t *grid, int x, int y) {
 	assert(grid != NULL);
 	assert(grid->data != NULL);
 
-	if (x > grid->width  || x == UINT_MAX) {
+	if (x >= grid->width  || x == UINT_MAX) {
 		return;
 	}
-	if (y > grid->height || y == UINT_MAX) {
+	if (y >= grid->height || y == UINT_MAX) {
 		return;
 	}
 
@@ -114,10 +114,12 @@ void grid_set(grid_t *grid, coord_t location, square_t square) {
 	unsigned int x = location.x, y = location.y;
 	assert(square == SQUARE_BOMB || square == SQUARE_EMPTY);
 	assert(grid != NULL);
-	assert(x < grid->width);
-	assert(y < grid->height);
 	assert(grid->data != NULL);
 
+	if (x >= grid->width || y >= grid->height) {
+		/* Don't overflow into wrong row or, worse, unallocated memory */
+		return;
+	}
 	*cell_at(x, y) = square;
 
 	/* Increment adjacent cells */
