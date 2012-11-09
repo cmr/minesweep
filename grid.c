@@ -12,7 +12,7 @@
 
 #define cell_at(x, y) (grid->data + (x) + (grid->width * (y)))
 
-static void incr_cell_f(grid_t *grid, int x, int y) {
+static inline void incr_cell_f(grid_t *grid, int x, int y) {
 	/* 0-1 is UINT_MAX, so when setting cells on the edges of the grid, this
 	 * won't modify other rows or, even worse, unallocated pages.
 	 * Not an assert because it's vital to proper functioning.
@@ -60,12 +60,22 @@ grid_t *grid_new(unsigned int height, unsigned int width, unsigned int bombs) {
 	memset(grid->data, 0, mem_needed);
 
 	coord_t *bombs_placed = malloc(sizeof(coord_t) * bombs);
+	unsigned int num_placed = bombs;
+	
+	/* XXX: don't need to check for duplicates because the period of
+	 * random(2) is 8x bigger than UINT_MAX-1, the maximum number of bombs
+	 * that can be placed. This IS platform dependant! If an unsigned int is
+	 * any larger than 34 bits, duplicate checking will need to be done.
+	 */
+	for (/* EMPTY */; num_placed != 0; num_placed--) {
+		grid_set(grid, coord(random() % width, random() % height), SQUARE_BOMB);
+	}
 
 	return grid;
 }
 
 /**
- * Delete a grid.
+ * Delete a grid and free its associated memory.
  *
  * @param grid Grid to delete
  */

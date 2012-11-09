@@ -1,1 +1,1 @@
-gcc -g -o grid test_grid.c grid.c
+gcc -g -o test_grid test_grid.c grid.c
