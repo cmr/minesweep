@@ -59,7 +59,6 @@ grid_t *grid_new(unsigned int height, unsigned int width, unsigned int bombs) {
 	grid->data = (square_t*)malloc(mem_needed);
 	memset(grid->data, 0, mem_needed);
 
-	coord_t *bombs_placed = malloc(sizeof(coord_t) * bombs);
 	unsigned int num_placed = bombs;
 	
 	/* XXX: don't need to check for duplicates because the period of
