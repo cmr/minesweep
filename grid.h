@@ -2,16 +2,17 @@
 #define GRID_H
 
 typedef struct square_t {
-	unsigned char hidden; /* 1 for hidden, 0 for revealed */
-	signed char value; /* -1 for bomb */
+	unsigned int hidden:1; /* 1 for hidden, 0 for revealed */
+	int value:4; /* Number of bomb neighbors */
+	int bomb:1; /* 1 for bomb, 0 for empty */
 } square_t;
 
-#define SQUARE_BOMB ((square_t){.hidden = 1, .value = -1})
-#define SQUARE_EMPTY ((square_t){.hidden = 1, .value = 0})
+#define SQUARE_BOMB ((square_t){.hidden = 1, .value = 0, .bomb=1})
+#define SQUARE_EMPTY ((square_t){.hidden = 1, .value = 0, .bomb=0})
 
 #define square_value(square) ((square).value)
-#define square_is_bomb(square) ((square).value == -1)
-#define square_hidden(square) ((square).hidden)
+#define square_is_bomb(square) ((square).bomb)
+#define square_is_hidden(square) ((square).hidden)
 #define square_cmp(sq1, sq2) ((sq1).value == (sq2).value)
 
 #define coord(x_, y_) ((coord_t){.x = (x_), .y = (y_)})
