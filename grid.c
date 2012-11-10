@@ -59,17 +59,7 @@ grid_t *grid_new(unsigned int height, unsigned int width, unsigned int bombs) {
 	grid->data = (square_t*)malloc(mem_needed);
 	memset(grid->data, 0, mem_needed);
 
-	unsigned int num_placed = bombs;
-	
-	/* XXX: don't need to check for duplicates because the period of
-	 * random(2) is 8x bigger than UINT_MAX-1, the maximum number of bombs
-	 * that can be placed. This IS platform dependant! If an unsigned int is
-	 * any larger than 34 bits, duplicate checking will need to be done.
-	 */
-	for (/* EMPTY */; num_placed != 0; num_placed--) {
-		grid_set(grid, coord(random() % width, random() % height), SQUARE_BOMB);
-	}
-
+	grid_add_bombs(grid, bombs);	
 	return grid;
 }
 
@@ -132,4 +122,15 @@ void grid_set(grid_t *grid, coord_t location, square_t square) {
 	incr_cell(x-1, y+1);
 	incr_cell(x, y+1);
 	incr_cell(x+1, y+1);
+}
+
+void grid_add_bombs(grid_t *grid, unsigned int bombs) {
+	/* XXX: don't need to check for duplicates because the period of
+	 * random(2) is 8x bigger than UINT_MAX-1, the maximum number of bombs
+	 * that can be placed. This IS platform dependant! If an unsigned int is
+	 * any larger than 34 bits, duplicate checking will need to be done.
+	 */
+	for (/* EMPTY */; bombs != 0; bombs--) {
+		grid_set(grid, coord(random() % grid->width, random() % grid->height), SQUARE_BOMB);
+	}
 }
