@@ -15,7 +15,7 @@ typedef struct square_t {
 #define square_is_hidden(square) ((square).hidden)
 #define square_cmp(sq1, sq2) ((sq1).value == (sq2).value)
 
-#define coord(x_, y_) ((coord_t){.x = (x_), .y = (y_)})
+#define coord_new(x_, y_) ((coord_t){.x = (x_), .y = (y_)})
 
 typedef struct grid {
 	unsigned int height, width, bombs;

@@ -138,6 +138,6 @@ void grid_add_bombs(grid_t *grid, unsigned int bombs) {
 	 * any larger than 34 bits, duplicate checking will need to be done.
 	 */
 	for (/* EMPTY */; bombs != 0; bombs--) {
-		grid_set(grid, coord(random() % grid->width, random() % grid->height), SQUARE_BOMB);
+		grid_set(grid, coord_new(random() % grid->width, random() % grid->height), SQUARE_BOMB);
 	}
 }

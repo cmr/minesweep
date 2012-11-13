@@ -19,14 +19,14 @@ int main(void) {
 	assert(grid->bombs  == 0);
 	assert(grid->data   != NULL);
 
-	grid_set(grid, coord(5, 5), SQUARE_BOMB);
-	assert(square_is_bomb(grid_get(grid, coord(5, 5))));
-	assert(square_value(grid_get(grid, coord(5, 6))) == 1);
-	assert(square_value(grid_get(grid, coord(4, 4))) == 1);
-	grid_set(grid, coord(5, 6), SQUARE_BOMB);
-	assert(square_value(grid_get(grid, coord(4, 5))) == 2);
-	grid_set(grid, coord(0, 0), SQUARE_BOMB);
-	assert(square_value(grid_get(grid, coord(0, 1))) == 1);
+	grid_set(grid, coord_new(5, 5), SQUARE_BOMB);
+	assert(square_is_bomb(grid_get(grid, coord_new(5, 5))));
+	assert(square_value(grid_get(grid, coord_new(5, 6))) == 1);
+	assert(square_value(grid_get(grid, coord_new(4, 4))) == 1);
+	grid_set(grid, coord_new(5, 6), SQUARE_BOMB);
+	assert(square_value(grid_get(grid, coord_new(4, 5))) == 2);
+	grid_set(grid, coord_new(0, 0), SQUARE_BOMB);
+	assert(square_value(grid_get(grid, coord_new(0, 1))) == 1);
 
 	grid_del(grid);
 
@@ -39,12 +39,12 @@ int main(void) {
 
 	/*
 	 *grid = grid_new(UINT_MAX - 1, UINT_MAX - 1, 0);
-	 *grid_set(grid, coord(UINT_MAX - 2, UINT_MAX - 2), SQUARE_BOMB);
-	 *assert(square_is_bomb(grid_get(grid, coord(UINT_MAX - 2, UINT_MAX - 2))));
+	 *grid_set(grid, coord_new(UINT_MAX - 2, UINT_MAX - 2), SQUARE_BOMB);
+	 *assert(square_is_bomb(grid_get(grid, coord_new(UINT_MAX - 2, UINT_MAX - 2))));
 	 */
 
 	grid = grid_new(16, 16, 0);
-	grid_set(grid, coord(16, 16), SQUARE_BOMB);
+	grid_set(grid, coord_new(16, 16), SQUARE_BOMB);
 
 	grid_del(grid);
 
