@@ -3,8 +3,9 @@
 
 typedef struct square_t {
 	unsigned int hidden:1; /* 1 for hidden, 0 for revealed */
-	int value:4; /* Number of bomb neighbors */
-	int bomb:1; /* 1 for bomb, 0 for empty */
+	unsigned int value:4; /* Number of bomb neighbors */
+	unsigned int bomb:1; /* 1 for bomb, 0 for empty */
+	unsigned int guess:2; /* 0 for none, 1 for unknown, 2 for empty, 3 for bomb */
 } square_t;
 
 #define SQUARE_BOMB ((square_t){.hidden = 1, .value = 0, .bomb=1})
