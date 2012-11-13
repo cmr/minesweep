@@ -12,7 +12,7 @@
 
 #define cell_at(x, y) (grid->data + (x) + (grid->width * (y)))
 
-static inline void incr_cell_f(grid_t *grid, int x, int y) {
+static inline void incr_cell_f(grid_t *grid, unsigned int x, unsigned int y) {
 	/* 0-1 is UINT_MAX, so when setting cells on the edges of the grid, this
 	 * won't modify other rows or, even worse, unallocated pages.
 	 * Not an assert because it's vital to proper functioning.
