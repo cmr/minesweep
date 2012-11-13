@@ -18,6 +18,7 @@ typedef struct square_t {
 #define square_is_bomb(square) ((square).bomb)
 #define square_is_hidden(square) ((square).hidden)
 #define square_cmp(sq1, sq2) ((sq1).value == (sq2).value)
+#define square_flag(square, val) ((square).guess = (val))
 
 #define coord_new(x_, y_) ((coord_t){.x = (x_), .y = (y_)})
 
