@@ -10,7 +10,10 @@ typedef struct square_t {
 
 #define SQUARE_BOMB ((square_t){.hidden = 1, .value = 0, .bomb=1})
 #define SQUARE_EMPTY ((square_t){.hidden = 1, .value = 0, .bomb=0})
-
+#define GUESS_NONE 0
+#define GUESS_UNKNOWN 1
+#define GUESS_EMPTY 2
+#define GUESS_BOMB 3
 #define square_value(square) ((square).value)
 #define square_is_bomb(square) ((square).bomb)
 #define square_is_hidden(square) ((square).hidden)
