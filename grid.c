@@ -125,6 +125,12 @@ void grid_set(grid_t *grid, coord_t location, square_t square) {
 	incr_cell(x+1, y+1);
 }
 
+/**
+ * Randomly place bombs on a grid.
+ *
+ * @param grid Grid to place bombs on
+ * @param bombs Number of bombs to place
+ */
 void grid_add_bombs(grid_t *grid, unsigned int bombs) {
 	/* XXX: don't need to check for duplicates because the period of
 	 * random(2) is 8x bigger than UINT_MAX-1, the maximum number of bombs
