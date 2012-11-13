@@ -141,3 +141,38 @@ void grid_add_bombs(grid_t *grid, unsigned int bombs) {
 		grid_set(grid, coord_new(random() % grid->width, random() % grid->height), SQUARE_BOMB);
 	}
 }
+
+/**
+ * Reveal a sqaure.
+ *
+ * @param grid Grid to reveal cell on
+ * @param location (x,y) of the cell to reveal
+ * @returns Value of the cell at (x,y)
+ */
+unsigned int grid_reveal(grid_t *grid, coord_t location) {
+	unsigned int x = location.x, y = location.y;
+	assert(grid != NULL);
+	assert(grid->data != NULL);
+	assert(x < grid->width);
+	assert(y < grid->height);
+
+	square_t *cell = cell_at(x, y);
+	if (cell->hidden) {
+		/* Don't do a potentially expensive operation */
+		cell->hidden = 0;
+		if(cell->value == 0) {
+			/* 0 cells have their neighbors revealed as well */
+			grid_reveal(grid, coord_new(x-1, y-1));
+			grid_reveal(grid, coord_new(x, y-1));
+			grid_reveal(grid, coord_new(x+1, y-1));
+
+			grid_reveal(grid, coord_new(x-1, y));
+			grid_reveal(grid, coord_new(x+1, y));
+
+			grid_reveal(grid, coord_new(x-1, y+1));
+			grid_reveal(grid, coord_new(x, y+1));
+			grid_reveal(grid, coord_new(x+1, y+1));
+		}
+	}
+	return cell->value;
+}

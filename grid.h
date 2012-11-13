@@ -32,4 +32,6 @@ void grid_del(grid_t *grid);
 square_t grid_get(grid_t *grid, coord_t location);
 void grid_set(grid_t *grid, coord_t location, square_t square);
 void grid_add_bombs(grid_t *grid, unsigned int bombs);
+unsigned int grid_reveal(grid_t *grid, coord_t location);
+
 #endif
