@@ -81,6 +81,7 @@ void grid_del(grid_t *grid) {
  *
  * @param grid Grid to get cell from
  * @param location (x,y) of cell
+ * @returns The square at (x,y)
  */
 square_t grid_get(grid_t *grid, coord_t location) {
 	unsigned int x = location.x, y = location.y;
