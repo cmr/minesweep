@@ -68,7 +68,7 @@ grid_t *grid_new(unsigned int height, unsigned int width, unsigned int bombs) {
  *
  * @param grid Grid to delete
  */
-void grid_del(grid_t *grid) {
+void grid_free(grid_t *grid) {
 	assert(grid != NULL);
 	assert(grid->data != NULL);
 

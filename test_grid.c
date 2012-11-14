@@ -11,7 +11,7 @@ int main(void) {
 	assert(grid->bombs  == 0);
 /*	assert(grid->data   == NULL); */
 
-	grid_del(grid);
+	grid_free(grid);
 	
 	grid = grid_new(10, 10, 0);
 	assert(grid->height == 10);
@@ -28,7 +28,7 @@ int main(void) {
 	grid_set(grid, coord_new(0, 0), SQUARE_BOMB);
 	assert(square_value(grid_get(grid, coord_new(0, 1))) == 1);
 
-	grid_del(grid);
+	grid_free(grid);
 
 	/* Mother of all memory hogs. 2^64 * 4 bytes. Counting on linux to do some
 	 * sort of CoW or lazy allocation... we'll see */
@@ -46,7 +46,7 @@ int main(void) {
 	grid = grid_new(16, 16, 0);
 	grid_set(grid, coord_new(16, 16), SQUARE_BOMB);
 
-	grid_del(grid);
+	grid_free(grid);
 
 	return 0;
 }

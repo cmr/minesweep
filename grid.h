@@ -33,7 +33,7 @@ typedef struct coord {
 } coord_t;
 
 grid_t *grid_new(unsigned int height, unsigned int width, unsigned int bombs);
-void grid_del(grid_t *grid);
+void grid_free(grid_t *grid);
 square_t grid_get(grid_t *grid, coord_t location);
 void grid_set(grid_t *grid, coord_t location, square_t square);
 void grid_add_bombs(grid_t *grid, unsigned int bombs);
