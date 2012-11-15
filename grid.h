@@ -5,20 +5,14 @@ typedef struct square_t {
 	unsigned int hidden:1; /* 1 for hidden, 0 for revealed */
 	unsigned int value:4; /* Number of bomb neighbors */
 	unsigned int bomb:1; /* 1 for bomb, 0 for empty */
-	unsigned int guess:2; /* 0 for none, 1 for unknown, 2 for empty, 3 for bomb */
 } square_t;
 
 #define SQUARE_BOMB ((square_t){.hidden = 1, .value = 0, .bomb=1})
 #define SQUARE_EMPTY ((square_t){.hidden = 1, .value = 0, .bomb=0})
-#define GUESS_NONE 0
-#define GUESS_UNKNOWN 1
-#define GUESS_EMPTY 2
-#define GUESS_BOMB 3
+
 #define square_value(square) ((square).value)
 #define square_is_bomb(square) ((square).bomb)
 #define square_is_hidden(square) ((square).hidden)
-#define square_cmp(sq1, sq2) ((sq1).value == (sq2).value)
-#define square_flag(square, val) ((square).guess = (val))
 
 #define coord_new(x_, y_) ((coord_t){.x = (x_), .y = (y_)})
 
