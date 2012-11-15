@@ -5,6 +5,7 @@
 #include "grid.h"
 
 int main(void) {
+	/* Test creation */
 	grid_t *grid = grid_new(0, 0, 0);
 	assert(grid->height == 0);
 	assert(grid->width  == 0);
@@ -19,6 +20,7 @@ int main(void) {
 	assert(grid->bombs  == 0);
 	assert(grid->data   != NULL);
 
+	/* Test set + get */
 	grid_set(grid, coord_new(5, 5), SQUARE_BOMB);
 	assert(square_is_bomb(grid_get(grid, coord_new(5, 5))));
 	assert(square_value(grid_get(grid, coord_new(5, 6))) == 1);
