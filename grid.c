@@ -150,9 +150,10 @@ void grid_add_bombs(grid_t *grid, unsigned int bombs) {
  *
  * @param grid Grid to reveal cell on
  * @param location (x,y) of the cell to reveal
- * @returns Value of the cell at (x,y)
+ * @returns Value of the cell at (x,y). Result will be negative if there was a
+ * bomb.
  */
-unsigned int grid_reveal(grid_t *grid, coord_t location) {
+int grid_reveal(grid_t *grid, coord_t location) {
 	unsigned int x = location.x, y = location.y;
 	assert(grid != NULL);
 	assert(grid->data != NULL);
@@ -160,11 +161,18 @@ unsigned int grid_reveal(grid_t *grid, coord_t location) {
 	assert(y < grid->height);
 
 	square_t *cell = cell_at(x, y);
+
 	if (cell->hidden) {
 		/* Don't do a potentially expensive operation */
 		cell->hidden = 0;
+
 		if(cell->value == 0) {
-			/* 0 cells have their neighbors revealed as well */
+			/* 0 cells have their neighbors revealed as well
+			 * XXX: this code has a pathlogical case of large contiguous
+			 * blocks of 0's. grid_reveal will be called for each square
+			 * mulptile times. While "correct", is vastly inefficient. Come up
+			 * with a better solution later
+			 */
 			grid_reveal(grid, coord_new(x-1, y-1));
 			grid_reveal(grid, coord_new(x, y-1));
 			grid_reveal(grid, coord_new(x+1, y-1));
@@ -176,6 +184,10 @@ unsigned int grid_reveal(grid_t *grid, coord_t location) {
 			grid_reveal(grid, coord_new(x, y+1));
 			grid_reveal(grid, coord_new(x+1, y+1));
 		}
+	}
+
+	if (cell->bomb) {
+		return -(cell->value);
 	}
 	return cell->value;
 }
