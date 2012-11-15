@@ -50,5 +50,13 @@ int main(void) {
 
 	grid_free(grid);
 
+	grid = grid_new(10, 10, 0);
+	
+	/* Ensure new squares are hidden */
+	for(int x = 0; x < 10; x++) {
+		for(int y = 0; y < 10; y++) {
+			assert(square_is_hidden(grid_get(grid, coord_new(x, y))));
+		}
+	}
 	return 0;
 }

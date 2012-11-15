@@ -55,11 +55,14 @@ grid_t *grid_new(unsigned int height, unsigned int width, unsigned int bombs) {
 	grid->height = height;
 	grid->width = width;
 	grid->bombs = bombs;
-	
-	grid->data = (square_t*)malloc(mem_needed);
-	memset(grid->data, 0, mem_needed);
 
-	grid_add_bombs(grid, bombs);	
+	grid->data = (square_t*)malloc(mem_needed);
+
+	for (int i = 0; i < width * height; i++) {
+		*(grid->data + i) = SQUARE_EMPTY;
+	}
+
+	grid_add_bombs(grid, bombs);
 	return grid;
 }
 
