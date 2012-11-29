@@ -162,6 +162,10 @@ int grid_reveal(grid_t *grid, coord_t location) {
 
 	square_t *cell = cell_at(x, y);
 
+	if (cell->bomb) {
+		return -(cell->value);
+	}
+
 	if (cell->hidden) {
 		/* Don't do a potentially expensive operation */
 		cell->hidden = 0;
@@ -186,8 +190,5 @@ int grid_reveal(grid_t *grid, coord_t location) {
 		}
 	}
 
-	if (cell->bomb) {
-		return -(cell->value);
-	}
 	return cell->value;
 }
