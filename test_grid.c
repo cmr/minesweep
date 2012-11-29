@@ -58,5 +58,13 @@ int main(void) {
 			assert(square_is_hidden(grid_get(grid, coord_new(x, y))));
 		}
 	}
+
+	/* Revealing a grid of 0's should reveal every square */
+	grid_reveal(grid, coord_new(1, 1));
+	for(int x = 0; x < 10; x++) {
+		for(int y = 0; y < 10; y++) {
+			assert(!square_is_hidden(grid_get(grid, coord_new(x, y))));
+		}
+	}
 	return 0;
 }
