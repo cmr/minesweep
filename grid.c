@@ -2,7 +2,7 @@
  * @file grid.c
  * @brief Creating, manipulating, and destroying Minesweeper grids
  */
-
+#define _XOPEN_SOURCE 500
 #include <assert.h>
 #include <stdlib.h>
 #include <limits.h>
