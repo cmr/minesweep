@@ -14,23 +14,17 @@ typedef struct square_t {
 #define square_is_bomb(square) ((square).bomb)
 #define square_is_hidden(square) ((square).hidden)
 
-#define coord_new(x_, y_) ((coord_t){.x = (x_), .y = (y_)})
-
 typedef struct grid {
 	unsigned int height, width, bombs;
 	square_t *data;
 } grid_t;
 
-typedef struct coord {
-	unsigned int x;
-	unsigned int y;
-} coord_t;
-
-grid_t *grid_new(unsigned int height, unsigned int width, unsigned int bombs);
+grid_t *grid_new(int height, int width, unsigned int bombs);
 void grid_free(grid_t *grid);
-square_t grid_get(grid_t *grid, coord_t location);
-void grid_set(grid_t *grid, coord_t location, square_t square);
+square_t grid_get(grid_t *grid, int x, int y);
+void grid_set(grid_t *grid, int x, int y, square_t square);
 void grid_add_bombs(grid_t *grid, unsigned int bombs);
-int grid_reveal(grid_t *grid, coord_t location);
+int grid_reveal(grid_t *grid, int x, int y);
+int square_eq(square_t one, square_t two);
 
 #endif

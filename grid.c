@@ -1,18 +1,21 @@
 /**
  * @file grid.c
  * @brief Creating, manipulating, and destroying Minesweeper grids
+ *
+ * @note All locations are 1-based when dealing with the grid!
  */
 #define _XOPEN_SOURCE 500
 #include <assert.h>
 #include <stdlib.h>
 #include <limits.h>
 #include <string.h>
+#include <stdio.h>
 
 #include "grid.h"
 
-#define cell_at(x, y) (grid->data + (x) + (grid->width * (y)))
+#define cell_at(x, y) (grid->data + ((y-1) * grid->width) + (x-1))
 
-static inline void incr_cell_f(grid_t *grid, unsigned int x, unsigned int y) {
+static inline void incr_cell_f(grid_t *grid, int x, int y) {
 	/* 0-1 is UINT_MAX, so when setting cells on the edges of the grid, this
 	 * won't modify other rows or, even worse, unallocated pages.
 	 * Not an assert because it's vital to proper functioning.
@@ -20,10 +23,10 @@ static inline void incr_cell_f(grid_t *grid, unsigned int x, unsigned int y) {
 	assert(grid != NULL);
 	assert(grid->data != NULL);
 
-	if (x >= grid->width  || x == UINT_MAX) {
+	if (x >= grid->width  || x <= 0) {
 		return;
 	}
-	if (y >= grid->height || y == UINT_MAX) {
+	if (y >= grid->height || y <= 0) {
 		return;
 	}
 
@@ -43,13 +46,13 @@ static inline void incr_cell_f(grid_t *grid, unsigned int x, unsigned int y) {
  *
  * @returns New grid
  */
-grid_t *grid_new(unsigned int height, unsigned int width, unsigned int bombs) {
-	unsigned long int mem_needed = sizeof(square_t) * width * height;
-	assert(bombs <= width * height);
-
-	if (width == UINT_MAX || height == UINT_MAX) {
+grid_t *grid_new(int height, int width, unsigned int bombs) {
+	if (width < 0 || height < 0) {
 		return NULL;
 	}
+
+	assert(bombs <= width * height);
+	unsigned long int mem_needed = sizeof(square_t) * width * height;
 
 	grid_t *grid = (grid_t*)malloc(sizeof(grid_t));
 	grid->height = height;
@@ -83,14 +86,14 @@ void grid_free(grid_t *grid) {
  * Get the value of a grid cell.
  *
  * @param grid Grid to get cell from
- * @param location (x,y) of cell
  * @returns The square at (x,y)
  */
-square_t grid_get(grid_t *grid, coord_t location) {
-	unsigned int x = location.x, y = location.y;
+square_t grid_get(grid_t *grid, int x, int y) {
 	assert(grid != NULL);
-	assert(x < grid->width);
-	assert(y < grid->height);
+	assert(x <= grid->width);
+	assert(y <= grid->height);
+	assert(x > 0);
+	assert(y > 0);
 	assert(grid->data != NULL);
 
 	return *cell_at(x, y);
@@ -100,16 +103,16 @@ square_t grid_get(grid_t *grid, coord_t location) {
  * Set the value of a grid cell.
  *
  * @param grid Grid to set cell on
- * @param location (x,y) of cell
  * @param square Value to set. Valid inputs: @a SQUARE_BOMB, @a SQUARE_EMPTY
  */
-void grid_set(grid_t *grid, coord_t location, square_t square) {
-	unsigned int x = location.x, y = location.y;
+void grid_set(grid_t *grid, int x, int y, square_t square) {
 	assert(square_is_bomb(square) || square_value(square) == 0);
 	assert(grid != NULL);
 	assert(grid->data != NULL);
+	assert(x != 0);
+	assert(y != 0);
 
-	if (x >= grid->width || y >= grid->height) {
+	if (x > grid->width || y > grid->height) {
 		/* Don't overflow into wrong row or, worse, unallocated memory */
 		return;
 	}
@@ -135,13 +138,15 @@ void grid_set(grid_t *grid, coord_t location, square_t square) {
  * @param bombs Number of bombs to place
  */
 void grid_add_bombs(grid_t *grid, unsigned int bombs) {
-	/* XXX: don't need to check for duplicates because the period of
-	 * random(3) is 8x bigger than UINT_MAX-1, the maximum number of bombs
-	 * that can be placed. This IS platform dependant! If an unsigned int is
-	 * any larger than 34 bits, duplicate checking will need to be done.
-	 */
-	for (/* EMPTY */; bombs != 0; bombs--) {
-		grid_set(grid, coord_new((unsigned)random() % grid->width, (unsigned)random() % grid->height), SQUARE_BOMB);
+	int x, y;
+	while (bombs != 0) {
+		do {
+			x = (random() % grid->width) + 1;
+			y = (random() % grid->height) + 1;
+		} while (square_is_bomb(*cell_at(x, y)));
+
+		grid_set(grid, x, y, SQUARE_BOMB);
+		bombs--;
 	}
 }
 
@@ -149,46 +154,65 @@ void grid_add_bombs(grid_t *grid, unsigned int bombs) {
  * Reveal a sqaure.
  *
  * @param grid Grid to reveal cell on
- * @param location (x,y) of the cell to reveal
- * @returns Value of the cell at (x,y). Result will be negative if there was a
- * bomb.
+ * @returns Value of the cell at (x,y). Result will be -(value + 1) if there
+ * is a bomb in the cell
  */
-int grid_reveal(grid_t *grid, coord_t location) {
-	unsigned int x = location.x, y = location.y;
+int grid_reveal(grid_t *grid, int x, int y) {
 	assert(grid != NULL);
 	assert(grid->data != NULL);
-	assert(x < grid->width);
-	assert(y < grid->height);
 
-	square_t *cell = cell_at(x, y);
-
-	if (cell->bomb) {
-		return -(cell->value);
+	if (x > grid->width || y > grid->height) {
+		return 0;
+	}
+	if (x < 1 || y < 1) {
+		return 0;
 	}
 
-	if (cell->hidden) {
-		/* Don't do a potentially expensive operation */
-		cell->hidden = 0;
+	square_t *cell = cell_at(x, y);
+	int old_hidden = cell->hidden;
+	cell->hidden = 0;
 
-		if(cell->value == 0) {
-			/* 0 cells have their neighbors revealed as well
-			 * XXX: this code has a pathlogical case of large contiguous
-			 * blocks of 0's. grid_reveal will be called for each square
-			 * mulptile times. While "correct", is vastly inefficient. Come up
-			 * with a better solution later
-			 */
-			grid_reveal(grid, coord_new(x-1, y-1));
-			grid_reveal(grid, coord_new(x, y-1));
-			grid_reveal(grid, coord_new(x+1, y-1));
+	if (cell->bomb) {
+		return -(cell->value+1);
+	}
 
-			grid_reveal(grid, coord_new(x-1, y));
-			grid_reveal(grid, coord_new(x+1, y));
+	if (old_hidden == 0) {
+		return cell->value;
+	}
 
-			grid_reveal(grid, coord_new(x-1, y+1));
-			grid_reveal(grid, coord_new(x, y+1));
-			grid_reveal(grid, coord_new(x+1, y+1));
-		}
+	/* Don't do a potentially expensive operation */
+
+	if(cell->value == 0) {
+		/* 0 cells have their neighbors revealed as well
+		 * XXX: this code has a pathlogical case of large contiguous
+		 * blocks of 0's. grid_reveal will be called for each square
+		 * mulptile times. This is inefficient, and also has a high
+		 * probability of blowing the stack for large grids.
+		 */
+		grid_reveal(grid, x-1, y-1);
+		grid_reveal(grid, x, y-1);
+		grid_reveal(grid, x+1, y-1);
+
+		grid_reveal(grid, x-1, y);
+		grid_reveal(grid, x+1, y);
+
+		grid_reveal(grid, x-1, y+1);
+		grid_reveal(grid, x, y+1);
+		grid_reveal(grid, x+1, y+1);
 	}
 
 	return cell->value;
+}
+
+/**
+ * Compare two squares for equality.
+ *
+ * Squares are considered equal if they have the same value and same
+ * bomb-carrying status. Visibility does not come into play.
+ */
+int square_eq(square_t one, square_t two) {
+	if (one.value == two.value && one.bomb == two.bomb) {
+		return 1;
+	}
+	return 0;
 }
